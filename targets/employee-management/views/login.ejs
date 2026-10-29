@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Login | Employee Management</title>
+
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    rel="stylesheet"
+    href="/styles/auth.css"
+  >
+</head>
+
+
+<body>
+
+  <div class="background-orb orb-one"></div>
+  <div class="background-orb orb-two"></div>
+
+
+  <a
+    href="/"
+    class="back-home"
+  >
+    ← Back to Home
+  </a>
+
+
+  <main class="auth-page">
+
+    <section class="auth-card">
+
+      <div class="auth-brand">
+
+        <div class="brand-mark">
+          EM
+        </div>
+
+        <div>
+
+          <span>
+            Employee Management
+          </span>
+
+          <h1>
+            Welcome back
+          </h1>
+
+        </div>
+
+      </div>
+
+
+      <p class="auth-description">
+        Sign in to continue to your employee dashboard.
+      </p>
+
+
+      <% if (
+        typeof success !== "undefined" &&
+        success
+      ) { %>
+
+        <div class="auth-message success-message">
+
+          <div class="message-icon">
+            ✓
+          </div>
+
+          <span>
+            <%= success %>
+          </span>
+
+        </div>
+
+      <% } %>
+
+
+      <% if (
+        typeof error !== "undefined" &&
+        error
+      ) { %>
+
+        <div class="auth-message error-message">
+
+          <div class="message-icon">
+            !
+          </div>
+
+          <span>
+            <%= error %>
+          </span>
+
+        </div>
+
+      <% } %>
+
+
+      <form
+        action="/login"
+        method="POST"
+        class="auth-form"
+      >
+
+        <div class="form-group">
+
+          <label for="username">
+            Username
+          </label>
+
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Enter your username"
+            autocomplete="username"
+            value="<%= typeof username !== 'undefined' ? username : '' %>"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="password">
+            Password
+          </label>
+
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+          >
+
+        </div>
+
+
+        <button
+          type="submit"
+          class="auth-submit"
+        >
+          Sign In
+        </button>
+
+      </form>
+
+
+      <div class="auth-footer">
+
+        <span>
+          Don't have an account?
+        </span>
+
+        <a href="/register">
+          Create account
+        </a>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</body>
+
+</html>

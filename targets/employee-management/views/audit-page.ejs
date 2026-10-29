@@ -1,0 +1,459 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Audit Logs</title>
+
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    rel="stylesheet"
+    href="/styles/audit-page.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="/styles/admin-navigation.css"
+  >
+</head>
+
+
+<body>
+
+  <!-- ========================
+       TOPBAR
+  ========================= -->
+
+  <header class="topbar">
+
+    <div class="brand">
+
+      <div class="brand-mark">
+        EM
+      </div>
+
+      <div>
+
+        <p class="brand-eyebrow">
+          Employee Management
+        </p>
+
+        <h2>
+          Security Monitoring
+        </h2>
+
+      </div>
+
+    </div>
+
+
+    <!-- ========================
+         NAVIGATION
+    ========================= -->
+
+    <nav class="admin-nav">
+
+      <a
+        href="/admin/dashboard"
+        class="admin-nav-link"
+      >
+        Dashboard
+      </a>
+
+      <a
+        href="/employees"
+        class="admin-nav-link"
+      >
+        Employees
+      </a>
+
+      <a
+        href="/admin/users"
+        class="admin-nav-link"
+      >
+        User Management
+      </a>
+
+      <a
+        href="/audit-logs"
+        class="admin-nav-link active"
+      >
+        Audit Logs
+      </a>
+
+    </nav>
+
+
+    <div class="topbar-right">
+
+      <div class="user-card">
+
+        <div class="avatar">
+          <%= currentUser.username
+            .charAt(0)
+            .toUpperCase()
+          %>
+        </div>
+
+        <div class="user-meta">
+
+          <strong>
+            <%= currentUser.username %>
+          </strong>
+
+          <span>
+            <%= currentUser.role %>
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <form
+        action="/logout"
+        method="POST"
+      >
+
+        <button
+          type="submit"
+          class="logout-btn"
+        >
+          Logout
+        </button>
+
+      </form>
+
+    </div>
+
+  </header>
+
+
+  <!-- ========================
+       MAIN
+  ========================= -->
+
+  <main class="container">
+
+    <!-- ========================
+         HEADER
+    ========================= -->
+
+    <section class="page-header">
+
+      <div>
+
+        <p class="eyebrow">
+          Security Monitoring
+        </p>
+
+        <h1>
+          Audit Logs
+        </h1>
+
+        <p class="description">
+          Review authentication events,
+          employee changes and
+          administrative activity.
+        </p>
+
+      </div>
+
+
+      <div class="log-count">
+
+        <strong>
+          <%= logs.length %>
+        </strong>
+
+        events
+
+      </div>
+
+    </section>
+
+
+    <!-- ========================
+         STATISTICS
+    ========================= -->
+
+    <section class="stats-grid">
+
+      <article class="stat-card">
+
+        <span class="stat-label">
+          Total Logs
+        </span>
+
+        <strong>
+          <%= logs.length %>
+        </strong>
+
+      </article>
+
+
+      <article class="stat-card">
+
+        <span class="stat-label">
+          Login Success
+        </span>
+
+        <strong>
+
+          <%= logs.filter(
+            (log) =>
+              log.action ===
+              "LOGIN_SUCCESS"
+          ).length %>
+
+        </strong>
+
+      </article>
+
+
+      <article class="stat-card">
+
+        <span class="stat-label">
+          Login Failed
+        </span>
+
+        <strong>
+
+          <%= logs.filter(
+            (log) =>
+              log.action ===
+              "LOGIN_FAILED"
+          ).length %>
+
+        </strong>
+
+      </article>
+
+
+      <article class="stat-card">
+
+        <span class="stat-label">
+          Employee Changes
+        </span>
+
+        <strong>
+
+          <%= logs.filter(
+            (log) =>
+              [
+                "EMPLOYEE_CREATED",
+                "EMPLOYEE_UPDATED",
+                "EMPLOYEE_DELETED",
+              ].includes(
+                log.action
+              )
+          ).length %>
+
+        </strong>
+
+      </article>
+
+    </section>
+
+
+    <!-- ========================
+         TABLE
+    ========================= -->
+
+    <section class="table-card">
+
+      <div class="table-header">
+
+        <div>
+
+          <h2>
+            Security Events
+          </h2>
+
+          <p>
+            Most recent audit events are shown first.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>ID</th>
+              <th>User</th>
+              <th>Action</th>
+              <th>Target</th>
+              <th>IP Address</th>
+              <th>Created At</th>
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            <% if (
+              logs &&
+              logs.length > 0
+            ) { %>
+
+              <% logs.forEach(
+                (log) => {
+              %>
+
+                <tr>
+
+                  <td>
+                    #<%= log.id %>
+                  </td>
+
+
+                  <td>
+
+                    <% if (
+                      log.username
+                    ) { %>
+
+                      <strong>
+                        <%= log.username %>
+                      </strong>
+
+                    <% } else { %>
+
+                      <span class="empty-value">
+                        Unknown
+                      </span>
+
+                    <% } %>
+
+                  </td>
+
+
+                  <td>
+
+                    <span
+                      class="
+                        action-badge
+                        action-<%= log.action
+                          .toLowerCase()
+                          .replaceAll("_", "-")
+                        %>
+                      "
+                    >
+                      <%= log.action %>
+                    </span>
+
+                  </td>
+
+
+                  <td>
+
+                    <% if (
+                      log.target
+                    ) { %>
+
+                      <%= log.target %>
+
+                    <% } else { %>
+
+                      <span class="empty-value">
+                        —
+                      </span>
+
+                    <% } %>
+
+                  </td>
+
+
+                  <td>
+
+                    <% if (
+                      log.ip_address
+                    ) { %>
+
+                      <code>
+                        <%= log.ip_address %>
+                      </code>
+
+                    <% } else { %>
+
+                      <span class="empty-value">
+                        —
+                      </span>
+
+                    <% } %>
+
+                  </td>
+
+
+                  <td>
+
+                    <%= new Date(
+                      log.created_at
+                    ).toLocaleString(
+                      "en-GB"
+                    ) %>
+
+                  </td>
+
+                </tr>
+
+              <% }); %>
+
+            <% } else { %>
+
+              <tr>
+
+                <td
+                  colspan="6"
+                  class="empty-state"
+                >
+                  No audit events found.
+                </td>
+
+              </tr>
+
+            <% } %>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</body>
+
+</html>

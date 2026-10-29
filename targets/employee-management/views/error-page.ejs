@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    <%= statusCode || 500 %> | Employee Management
+  </title>
+
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    rel="stylesheet"
+    href="/styles/error-page.css"
+  >
+</head>
+
+
+<body>
+
+  <main class="error-page">
+
+    <div class="error-card">
+
+      <div class="error-logo">
+        EM
+      </div>
+
+      <p class="error-eyebrow">
+        Employee Management
+      </p>
+
+      <h1 class="error-code">
+        <%= statusCode || 500 %>
+      </h1>
+
+      <h2 class="error-title">
+        <%= title || "Something went wrong" %>
+      </h2>
+
+      <p class="error-message">
+        <%= message || "An unexpected error occurred." %>
+      </p>
+
+      <div class="error-actions">
+
+        <a
+          href="/"
+          class="primary-btn"
+        >
+          Back to Dashboard
+        </a>
+
+        <button
+          type="button"
+          class="secondary-btn"
+          onclick="history.back()"
+        >
+          Go Back
+        </button>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</body>
+
+</html>

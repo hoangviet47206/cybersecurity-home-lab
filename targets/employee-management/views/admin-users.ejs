@@ -1,0 +1,435 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>User Management</title>
+
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    rel="stylesheet"
+    href="/styles/admin-users.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="/styles/admin-navigation.css"
+  >
+</head>
+
+
+<body>
+
+  <!-- ========================
+       TOPBAR
+  ========================= -->
+
+  <header class="topbar">
+
+    <div class="brand">
+
+      <div class="brand-mark">
+        EM
+      </div>
+
+      <div>
+
+        <p class="brand-eyebrow">
+          Employee Management
+        </p>
+
+        <h2>
+          Admin Panel
+        </h2>
+
+      </div>
+
+    </div>
+
+
+    <!-- ========================
+         NAVIGATION
+    ========================= -->
+
+    <nav class="admin-nav">
+
+      <a
+        href="/admin/dashboard"
+        class="admin-nav-link"
+      >
+        Dashboard
+      </a>
+
+      <a
+        href="/employees"
+        class="admin-nav-link"
+      >
+        Employees
+      </a>
+
+      <a
+        href="/admin/users"
+        class="admin-nav-link active"
+      >
+        User Management
+      </a>
+
+      <a
+        href="/audit-logs"
+        class="admin-nav-link"
+      >
+        Audit Logs
+      </a>
+
+    </nav>
+
+
+    <div class="topbar-right">
+
+      <div class="user-card">
+
+        <div class="avatar">
+          <%= currentUser.username
+            .charAt(0)
+            .toUpperCase()
+          %>
+        </div>
+
+        <div class="user-meta">
+
+          <strong>
+            <%= currentUser.username %>
+          </strong>
+
+          <span>
+            <%= currentUser.role %>
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <form
+        action="/logout"
+        method="POST"
+      >
+
+        <button
+          type="submit"
+          class="logout-btn"
+        >
+          Logout
+        </button>
+
+      </form>
+
+    </div>
+
+  </header>
+
+
+  <!-- ========================
+       MAIN
+  ========================= -->
+
+  <main class="container">
+
+    <section class="page-header">
+
+      <div>
+
+        <p class="eyebrow">
+          Administration
+        </p>
+
+        <h1>
+          User Management
+        </h1>
+
+        <p class="description">
+          Manage application accounts and access roles.
+        </p>
+
+      </div>
+
+
+      <div class="user-count">
+
+        <strong>
+          <%= users.length %>
+        </strong>
+
+        users
+
+      </div>
+
+    </section>
+
+
+    <!-- ========================
+         USER TABLE
+    ========================= -->
+
+    <section class="table-card">
+
+      <div class="table-header">
+
+        <div>
+
+          <h2>
+            Application Users
+          </h2>
+
+          <p>
+            Only administrators can change user roles.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Employee ID</th>
+              <th>Current Role</th>
+              <th>Change Role</th>
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            <% if (
+              users &&
+              users.length > 0
+            ) { %>
+
+              <% users.forEach(
+                (user) => {
+              %>
+
+                <tr>
+
+                  <td>
+                    #<%= user.id %>
+                  </td>
+
+
+                  <td>
+
+                    <div class="username-cell">
+
+                      <div class="mini-avatar">
+                        <%= user.username
+                          .charAt(0)
+                          .toUpperCase()
+                        %>
+                      </div>
+
+                      <div>
+
+                        <strong>
+                          <%= user.username %>
+                        </strong>
+
+                        <% if (
+                          currentUser.id ===
+                          user.id
+                        ) { %>
+
+                          <span class="you-badge">
+                            You
+                          </span>
+
+                        <% } %>
+
+                      </div>
+
+                    </div>
+
+                  </td>
+
+
+                  <td>
+                    <%= user.email %>
+                  </td>
+
+
+                  <td>
+
+                    <% if (
+                      user.employee_id
+                    ) { %>
+
+                      <span class="employee-id">
+                        #<%= user.employee_id %>
+                      </span>
+
+                    <% } else { %>
+
+                      <span class="empty-value">
+                        Not linked
+                      </span>
+
+                    <% } %>
+
+                  </td>
+
+
+                  <td>
+
+                    <span
+                      class="role-badge role-<%= user.role %>"
+                    >
+                      <%= user.role %>
+                    </span>
+
+                  </td>
+
+
+                  <td>
+
+                    <form
+                      action="/admin/users/role"
+                      method="POST"
+                      class="role-form"
+                    >
+
+                      <input
+                        type="hidden"
+                        name="userId"
+                        value="<%= user.id %>"
+                      >
+
+
+                      <select
+                        name="role"
+                        class="role-select"
+                        <%= currentUser.id === user.id
+                          ? "disabled"
+                          : ""
+                        %>
+                      >
+
+                        <option
+                          value="employee"
+                          <%= user.role === "employee"
+                            ? "selected"
+                            : ""
+                          %>
+                        >
+                          Employee
+                        </option>
+
+                        <option
+                          value="manager"
+                          <%= user.role === "manager"
+                            ? "selected"
+                            : ""
+                          %>
+                        >
+                          Manager
+                        </option>
+
+                        <option
+                          value="admin"
+                          <%= user.role === "admin"
+                            ? "selected"
+                            : ""
+                          %>
+                        >
+                          Admin
+                        </option>
+
+                      </select>
+
+
+                      <% if (
+                        currentUser.id !==
+                        user.id
+                      ) { %>
+
+                        <button
+                          type="submit"
+                          class="update-role-btn"
+                        >
+                          Update
+                        </button>
+
+                      <% } else { %>
+
+                        <span class="protected-text">
+                          Protected
+                        </span>
+
+                      <% } %>
+
+                    </form>
+
+                  </td>
+
+                </tr>
+
+              <% }); %>
+
+            <% } else { %>
+
+              <tr>
+
+                <td
+                  colspan="6"
+                  class="empty-state"
+                >
+                  No users found.
+                </td>
+
+              </tr>
+
+            <% } %>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</body>
+
+</html>

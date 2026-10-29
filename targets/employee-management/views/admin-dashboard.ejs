@@ -1,0 +1,703 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Admin Dashboard</title>
+
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    rel="stylesheet"
+    href="/styles/admin-dashboard.css"
+  >
+  <link
+  rel="stylesheet"
+  href="/styles/admin-navigation.css"
+  >
+</head>
+
+
+<body>
+
+  <!-- ========================
+       TOPBAR
+  ========================= -->
+
+  <header class="topbar">
+
+    <div class="brand">
+
+      <div class="brand-mark">
+        EM
+      </div>
+
+      <div>
+
+        <p class="brand-eyebrow">
+          Employee Management
+        </p>
+
+        <h2>
+          Admin Dashboard
+        </h2>
+
+      </div>
+
+    </div>
+
+
+    <nav class="admin-nav">
+
+      <a
+        href="/admin/dashboard"
+        class="admin-nav-link active"
+      >
+        Dashboard
+      </a>
+
+      <a
+        href="/employees"
+        class="admin-nav-link"
+      >
+        Employees
+      </a>
+
+      <a
+        href="/admin/users"
+        class="admin-nav-link"
+      >
+        User Management
+      </a>
+
+      <a
+        href="/audit-logs"
+        class="admin-nav-link"
+      >
+        Audit Logs
+      </a>
+
+    </nav>
+
+
+    <div class="topbar-right">
+
+      <div class="user-card">
+
+        <div class="avatar">
+          <%= currentUser.username
+            .charAt(0)
+            .toUpperCase()
+          %>
+        </div>
+
+        <div class="user-meta">
+
+          <strong>
+            <%= currentUser.username %>
+          </strong>
+
+          <span>
+            <%= currentUser.role %>
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <form
+        action="/logout"
+        method="POST"
+      >
+
+        <button
+          type="submit"
+          class="logout-btn"
+        >
+          Logout
+        </button>
+
+      </form>
+
+    </div>
+
+  </header>
+
+
+  <!-- ========================
+       MAIN CONTENT
+  ========================= -->
+
+  <main class="container">
+
+    <!-- ========================
+         PAGE HEADER
+    ========================= -->
+
+    <section class="page-header">
+
+      <div>
+
+        <p class="eyebrow">
+          System Overview
+        </p>
+
+        <h1>
+          Admin Dashboard
+        </h1>
+
+        <p class="description">
+          Monitor employees, users, access roles and recent security activity.
+        </p>
+
+      </div>
+
+
+      <div class="status-badge">
+        System Active
+      </div>
+
+    </section>
+
+
+    <!-- ========================
+         MAIN STATISTICS
+    ========================= -->
+
+    <section class="stats-grid">
+
+      <article class="stat-card">
+
+        <div class="stat-icon">
+          👥
+        </div>
+
+        <div class="stat-content">
+
+          <span>
+            Total Employees
+          </span>
+
+          <strong>
+            <%= stats.totalEmployees %>
+          </strong>
+
+          <small>
+            Registered employees
+          </small>
+
+        </div>
+
+      </article>
+
+
+      <article class="stat-card">
+
+        <div class="stat-icon">
+          👤
+        </div>
+
+        <div class="stat-content">
+
+          <span>
+            Total Users
+          </span>
+
+          <strong>
+            <%= stats.totalUsers %>
+          </strong>
+
+          <small>
+            Application accounts
+          </small>
+
+        </div>
+
+      </article>
+
+
+      <article class="stat-card">
+
+        <div class="stat-icon">
+          🛡
+        </div>
+
+        <div class="stat-content">
+
+          <span>
+            Managers
+          </span>
+
+          <strong>
+            <%= stats.managerCount %>
+          </strong>
+
+          <small>
+            Elevated access users
+          </small>
+
+        </div>
+
+      </article>
+
+
+      <article class="stat-card">
+
+        <div class="stat-icon">
+          🔐
+        </div>
+
+        <div class="stat-content">
+
+          <span>
+            Admins
+          </span>
+
+          <strong>
+            <%= stats.adminCount %>
+          </strong>
+
+          <small>
+            Full access users
+          </small>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- ========================
+         SECURITY STATISTICS
+    ========================= -->
+
+    <section class="stats-grid security-stats">
+
+      <article class="stat-card">
+
+        <div class="stat-icon">
+          ⚠️
+        </div>
+
+        <div class="stat-content">
+
+          <span>
+            Failed Logins
+          </span>
+
+          <strong>
+            <%= stats.failedLoginCount %>
+          </strong>
+
+          <small>
+            Recorded login failures
+          </small>
+
+        </div>
+
+      </article>
+
+
+      <article class="stat-card">
+
+        <div class="stat-icon">
+          📋
+        </div>
+
+        <div class="stat-content">
+
+          <span>
+            Events Today
+          </span>
+
+          <strong>
+            <%= stats.todayAuditCount %>
+          </strong>
+
+          <small>
+            Audit events today
+          </small>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- ========================
+         USER + OFFICE CHARTS
+    ========================= -->
+
+    <section class="chart-grid">
+
+      <!-- USERS BY ROLE -->
+
+      <article class="dashboard-card">
+
+        <div class="card-header">
+
+          <div>
+
+            <p class="card-eyebrow">
+              Accounts
+            </p>
+
+            <h2>
+              Users by Role
+            </h2>
+
+          </div>
+
+          <span class="card-tag">
+            Distribution
+          </span>
+
+        </div>
+
+
+        <div
+          class="
+            real-chart-container
+            doughnut-chart-container
+          "
+        >
+
+          <canvas
+            id="roleChart"
+          ></canvas>
+
+        </div>
+
+      </article>
+
+
+      <!-- EMPLOYEES BY OFFICE -->
+
+      <article class="dashboard-card">
+
+        <div class="card-header">
+
+          <div>
+
+            <p class="card-eyebrow">
+              Workforce
+            </p>
+
+            <h2>
+              Employees by Office
+            </h2>
+
+          </div>
+
+          <span class="card-tag">
+            Offices
+          </span>
+
+        </div>
+
+
+        <div class="real-chart-container">
+
+          <canvas
+            id="officeChart"
+          ></canvas>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- ========================
+         AUDIT ACTIVITY
+    ========================= -->
+
+    <section class="dashboard-card wide-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <p class="card-eyebrow">
+            Security
+          </p>
+
+          <h2>
+            Audit Activity
+          </h2>
+
+        </div>
+
+        <span class="card-tag">
+          Last 7 Days
+        </span>
+
+      </div>
+
+
+      <div
+        class="
+          real-chart-container
+          audit-chart-container
+        "
+      >
+
+        <canvas
+          id="auditActivityChart"
+        ></canvas>
+
+      </div>
+
+    </section>
+
+
+    <!-- ========================
+         EVENTS BY ACTION
+    ========================= -->
+
+    <section class="dashboard-card wide-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <p class="card-eyebrow">
+            Audit
+          </p>
+
+          <h2>
+            Events by Action
+          </h2>
+
+        </div>
+
+        <span class="card-tag">
+          Activity Types
+        </span>
+
+      </div>
+
+
+      <div
+        class="
+          real-chart-container
+          audit-chart-container
+        "
+      >
+
+        <canvas
+          id="auditActionChart"
+        ></canvas>
+
+      </div>
+
+    </section>
+
+
+    <!-- ========================
+         RECENT SECURITY EVENTS
+    ========================= -->
+
+    <section class="dashboard-card recent-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <p class="card-eyebrow">
+            Monitoring
+          </p>
+
+          <h2>
+            Recent Security Events
+          </h2>
+
+        </div>
+
+
+        <a
+          href="/audit-logs"
+          class="view-all-link"
+        >
+          View all
+        </a>
+
+      </div>
+
+
+      <div class="activity-list">
+
+        <% if (
+          recentEvents &&
+          recentEvents.length > 0
+        ) { %>
+
+          <% recentEvents.forEach(
+            (event) => {
+          %>
+
+            <div class="activity-item">
+
+              <div
+                class="
+                  activity-icon
+                  <%= event.action === "LOGIN_SUCCESS"
+                    ? "success"
+                    : event.action === "LOGIN_FAILED"
+                      ? "danger"
+                      : event.action === "USER_ROLE_UPDATED"
+                        ? "warning"
+                        : "info"
+                  %>
+                "
+              >
+
+                <% if (
+                  event.action ===
+                  "LOGIN_SUCCESS"
+                ) { %>
+
+                  ✓
+
+                <% } else if (
+                  event.action ===
+                  "LOGIN_FAILED"
+                ) { %>
+
+                  !
+
+                <% } else if (
+                  event.action ===
+                  "USER_ROLE_UPDATED"
+                ) { %>
+
+                  ↕
+
+                <% } else { %>
+
+                  +
+
+                <% } %>
+
+              </div>
+
+
+              <div class="activity-main">
+
+                <strong>
+                  <%= event.action %>
+                </strong>
+
+                <span>
+
+                  <%= event.username || "Unknown user" %>
+
+                  <% if (event.target) { %>
+
+                    · <%= event.target %>
+
+                  <% } %>
+
+                </span>
+
+              </div>
+
+
+              <time>
+
+                <%= new Date(
+                  event.created_at
+                ).toLocaleString(
+                  "en-GB",
+                  {
+                    day: "2-digit",
+                    month: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }
+                ) %>
+
+              </time>
+
+            </div>
+
+          <% }); %>
+
+        <% } else { %>
+
+          <div class="activity-empty">
+            No recent security events.
+          </div>
+
+        <% } %>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- ========================
+       DASHBOARD DATA
+       Không phải inline JavaScript.
+       Chỉ lưu JSON vào data attribute.
+  ========================= -->
+
+  <div
+    id="dashboard-data"
+    hidden
+    data-dashboard="<%= JSON.stringify({
+      roleData,
+      employeesByOffice,
+      auditByAction,
+      auditLast7Days
+    }) %>"
+  ></div>
+
+
+  <!-- ========================
+       CHART.JS
+  ========================= -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/chart.js"
+  ></script>
+
+
+  <!-- ========================
+       DASHBOARD JAVASCRIPT
+  ========================= -->
+
+  <script
+    src="/scripts/admin-dashboard.js"
+  ></script>
+
+</body>
+
+</html>
