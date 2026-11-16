@@ -1,132 +1,359 @@
-# Kịch bản 01: Mô phỏng và Phát hiện Tấn công SSH Brute-Force (Detection Engineering)
+
+# Kịch bản 02: Phản ứng sự cố tự động (SOAR) – Tự động chặn & Chặn thủ công qua Telegram
 
 ## 🎯 1. Mục tiêu
 
-Kịch bản này mô phỏng một cuộc tấn công dò mật khẩu (SSH Brute-Force) vào máy chủ mục tiêu. Sau đó, sử dụng hệ thống SIEM **Wazuh** để giám sát, phân tích các cảnh báo mặc định và thực hành **Detection Engineering** thông qua việc xây dựng luật phát hiện tùy chỉnh (Custom Detection Rule).
+Kịch bản này là bước phát triển tiếp theo của [Kịch bản 01](../01-ssh-bruteforce/README.md). Sau khi Wazuh phát hiện hành vi SSH Brute-Force bằng Custom Rule `100001` (Level 10), hệ thống sẽ **phản ứng lại cuộc tấn công (Incident Response)** theo hai hướng:
 
-Mục tiêu chính là nhận diện hành vi đăng nhập SSH thất bại liên tục từ cùng một địa chỉ IP, thiết lập ngưỡng phát hiện và nâng mức cảnh báo lên **Level 10** khi phát hiện dấu hiệu Brute-Force.
+| Hướng | Cơ chế | Ai quyết định chặn? | Thời gian phản ứng |
+|---|---|---|---|
+| **A. Tự động chặn (Auto-Ban)** | Wazuh **Active Response** gọi `firewall-drop` (iptables) trực tiếp trên Agent | Hệ thống tự quyết định | Gần như tức thì |
+| **B. Chặn thủ công (Manual Ban)** | Wazuh → **n8n** → **Telegram** gửi cảnh báo kèm nút bấm → Analyst nhấn **Ban** → n8n gọi **Wazuh API** → Active Response | Người phân tích (Human-in-the-loop) | Phụ thuộc Analyst |
 
-## 🏗️ 2. Môi trường Lab (Topology)
+> **Vì sao cần cả hai?** Auto-Ban nhanh nhưng có nguy cơ chặn nhầm (False Positive), ví dụ chặn IP của chính quản trị viên. Manual Ban cho phép con người xác minh trước khi hành động. Trong thực tế, SOC thường kết hợp: tự động với các luật có độ tin cậy cao, thủ công với các trường hợp cần xác minh.
+
+## 🏗️ 2. Kiến trúc & Môi trường Lab
+
+```text
+                         ┌──────────────────────────────────────────────┐
+                         │              Wazuh Server                   │
+Kali (Attacker)          │  Rule 100001 (Level 10)                      │
+192.168.129.128          │      │                                       │
+      │ Hydra            │      ├──► [Hướng A] Active Response ─────────┼──┐
+      ▼                  │      │                                       │  │ firewall-drop
+Ubuntu Target ──log──►   │      └──► [Hướng B] Integration (Webhook)    │  │ (iptables DROP)
+192.168.129.129          └───────────────────┬──────────────────────────┘  │
+      ▲                                      ▼                             │
+      │                              n8n (Wazuh_SOC.json)                  │
+      │                                      │                             │
+      │                                      ▼                             │
+      │                          Telegram Bot: cảnh báo + nút [Ban]       │
+      │                                      │ Analyst nhấn nút            │
+      │                                      ▼                             │
+      │                    ngrok ──► n8n (Tele_to_Wazuh.json)              │
+      │                                      │ Wazuh API: PUT /active-response
+      └──────────────────────────────────────┴─────────────────────────────┘
+```
 
 | Thành phần | Hệ thống | Địa chỉ IP / Cấu hình |
 |---|---|---|
 | Attacker | Kali Linux | `192.168.129.128` |
-| Target | Ubuntu Target | `192.168.129.129` |
-| SSH Service | Ubuntu Target | Port `2222` |
-| SIEM | Wazuh Server | Standalone VM |
+| Target (Wazuh Agent) | Ubuntu Target | `192.168.129.129` – SSH port `2222` |
+| SIEM | Wazuh Server | Standalone VM (Manager + API `55000`) |
+| SOAR / Automation | n8n | Port `5678` |
+| Public Tunnel | ngrok | Expose n8n ra Internet để Telegram gọi Webhook |
+| Kênh thông báo | Telegram Bot | Gửi cảnh báo và nhận lệnh từ nút bấm |
 
-**Công cụ sử dụng:** `Hydra`, `grep`, `journalctl`, Wazuh Dashboard, Wazuh Custom Rules.
+**Công cụ sử dụng:** `Hydra`, `iptables`, Wazuh Active Response, Wazuh API, `n8n`, `ngrok`, Telegram Bot API.
 
-## 🛠️ 3. Các bước thực hiện
-
-### Bước 1: Red Team – Thực hiện tấn công Brute-Force
-
-Từ máy Kali Linux, tạo danh sách gồm 50 mật khẩu giả lập để mô phỏng quá trình dò mật khẩu. Sau đó, sử dụng công cụ `hydra` để thực hiện nhiều lần đăng nhập SSH vào máy Ubuntu Target thông qua cổng `2222`.
-
-```bash
-# Tạo danh sách 50 mật khẩu giả lập
-seq 1 50 > passwords.txt
-
-# Thực hiện tấn công SSH Brute-Force
-hydra -l root -P passwords.txt ssh://192.168.129.129:2222 -t 4
-```
-
-**Kết quả:** Hydra liên tục thử đăng nhập bằng các mật khẩu trong danh sách, tạo ra nhiều sự kiện xác thực thất bại trên máy chủ mục tiêu.
-
-![Hydra SSH Brute-Force Attack](screenshots/hydra-attack-running.png)
-
-### Bước 2: Blue Team – Kiểm tra Log hệ thống (Local)
-
-Trên máy Ubuntu Target, kiểm tra file log xác thực để xác nhận hệ điều hành đã ghi nhận các lần đăng nhập SSH thất bại từ máy Kali Linux.
-
-```bash
-sudo grep -a "Failed password" /var/log/auth.log | tail -n 10
-```
-
-**Kết quả:** Log hệ thống ghi nhận nhiều lần đăng nhập thất bại, kèm theo địa chỉ IP nguồn `192.168.129.128`. Đây là bằng chứng cho thấy hoạt động Brute-Force đã được ghi nhận ở cấp độ hệ điều hành.
-
-![Ubuntu SSH Authentication Failed Log](screenshots/auth-log-failed.png)
-
-### Bước 3: Detection Engineering – Phân tích cảnh báo mặc định trên Wazuh
-
-Wazuh sử dụng các bộ quy tắc mặc định (Out-of-the-box Rules) để phân tích log xác thực SSH được thu thập từ máy Ubuntu Target.
-
-Khi xuất hiện các sự kiện đăng nhập thất bại, Wazuh tự động phân tích và tạo cảnh báo tương ứng.
-
-Một số Rule liên quan đến quá trình phát hiện trong kịch bản:
-
-| Rule ID | Rule Level | Mô tả |
-|---|---:|---|
-| `5760` | `5` | SSH authentication failed |
-| `5551` | `10` | PAM: Multiple failed logins in a short period |
-| `2502` | `10` | Phát hiện nhiều lần nhập sai mật khẩu |
-
-Truy cập Wazuh Dashboard và lọc theo agent:
+## 📁 3. Cấu trúc thư mục
 
 ```text
-agent.name: ubuntu-target
+02-auto-ban/
+├── README.md
+├── Wazuh_SOC.json
+├── Tele_to_Wazuh.json
+└── screenshots/
+    ├── 1_Kali_Hydra_Bi_Treo.png
+    ├── 2_Telegram_CanhBao_Level10.png
+    ├── 3_Ubuntu_Log_ThucThi_ActiveResponse.png
+    ├── 4_Ubuntu_Iptables_Drop_IP.png
+    ├── Ban_Thu_Cong.png
+    ├── tele_to_wazuh.png
+    ├── Thong_Bao_Tan_Cong.png
+    └── wazuh_soc.png
 ```
 
-**Kết quả:** Dashboard hiển thị các sự kiện đăng nhập thất bại cùng thông tin địa chỉ IP nguồn và mức độ cảnh báo. Qua đó, có thể quan sát cách Wazuh sử dụng các Rule mặc định để nhận diện những hành vi bất thường.
+Import hai file `.json` vào n8n qua **Workflows → Import from File**.
 
-![Wazuh SSH Brute-Force Detection Dashboard](screenshots/wazuh-alert-dashboard.png)
+## 🧰 4. Chuẩn bị chung
 
-### Bước 4: Detection Engineering – Xây dựng Custom Detection Rule
+### 4.1. Điều kiện cần
 
-Sau khi phân tích các cảnh báo mặc định, tiến hành xây dựng một luật phát hiện tùy chỉnh nhằm chủ động kiểm soát ngưỡng nhận diện hành vi SSH Brute-Force.
+- Đã hoàn thành Kịch bản 01: Custom Rule `100001` hoạt động (Level 10).
+- Ubuntu Target đã cài Wazuh Agent và kết nối về Manager.
+- Đã tạo Telegram Bot qua `@BotFather` (lấy `BOT_TOKEN`) và lấy `CHAT_ID` (qua `@userinfobot` hoặc API `getUpdates`).
 
-**Yêu cầu phát hiện:**
+### 4.2. Kiểm tra Active Response khả dụng trên Agent
 
-- Theo dõi các sự kiện đăng nhập SSH thất bại được nhận diện bởi Rule `5760`.
-- Nếu xuất hiện ít nhất 5 lần trong vòng 60 giây từ cùng một địa chỉ IP nguồn, kích hoạt cảnh báo.
-- Đặt mức độ cảnh báo là **Level 10** để đánh dấu hành vi có dấu hiệu Brute-Force.
-
-**Vị trí cấu hình:**
+Wazuh có sẵn script `firewall-drop` trong `/var/ossec/active-response/bin/`:
 
 ```bash
-sudo nano /var/ossec/etc/rules/local_rules.xml
+# Trên Ubuntu Target
+ls -l /var/ossec/active-response/bin/ | grep firewall-drop
 ```
 
-**Mã nguồn Custom Rule:**
+---
+
+# 🅰️ HƯỚNG A – TỰ ĐỘNG CHẶN (AUTO-BAN)
+
+## 🛠️ 5. Các bước thực hiện
+
+### Bước 1: Cấu hình Active Response trên Wazuh Manager
+
+Mở file cấu hình:
+
+```bash
+sudo nano /var/ossec/etc/ossec.conf
+```
+
+Thêm khối sau vào trong thẻ `<ossec_config>`:
 
 ```xml
-<group name="local,syslog,sshd,">
-  <rule id="100001" level="10" frequency="5" timeframe="60">
-    <if_matched_sid>5760</if_matched_sid>
-    <same_source_ip />
-    <description>SSH Brute-Force Attack Detected: Multiple failed SSH login attempts from the same source IP.</description>
-    <mitre>
-      <id>T1110.001</id>
-    </mitre>
-  </rule>
-</group>
+<!-- Command firewall-drop (thường đã có sẵn mặc định) -->
+<command>
+  <name>firewall-drop</name>
+  <executable>firewall-drop</executable>
+  <timeout_allowed>yes</timeout_allowed>
+</command>
+
+<!-- Tự động chặn IP khi Rule 100001 được kích hoạt -->
+<active-response>
+  <command>firewall-drop</command>
+  <location>local</location>
+  <rules_id>100001</rules_id>
+  <timeout>600</timeout>
+</active-response>
 ```
 
-**Thông tin luật phát hiện:**
-
-| Thuộc tính | Giá trị |
+| Thuộc tính | Ý nghĩa |
 |---|---|
-| Rule ID | `100001` |
-| Rule Level | `10` |
-| Frequency | `5` |
-| Timeframe | `60 seconds` |
-| Correlation | Cùng địa chỉ IP nguồn |
-| MITRE ATT&CK | `T1110.001 – Password Guessing` |
+| `command` | Dùng script `firewall-drop` (thêm rule `DROP` vào iptables) |
+| `location` | `local` – thực thi trên chính Agent phát sinh cảnh báo (Ubuntu Target) |
+| `rules_id` | Kích hoạt khi Rule `100001` xuất hiện |
+| `timeout` | Tự động gỡ chặn sau `600` giây (10 phút) |
 
-Sau khi bổ sung luật, kiểm tra cấu hình và khởi động lại Wazuh Manager:
+Khởi động lại Manager:
 
 ```bash
 sudo systemctl restart wazuh-manager
 ```
 
-Khi hệ thống nhận đủ số lượng sự kiện thỏa mãn điều kiện phát hiện, Custom Rule `100001` sẽ được kích hoạt và tạo cảnh báo Level 10.
+### Bước 2: Red Team – Tấn công Brute-Force
 
-**Kết quả mong đợi:** Wazuh Dashboard hiển thị cảnh báo với Rule ID `100001`, cho phép xác định hành vi SSH Brute-Force dựa trên ngưỡng phát hiện do người quản trị thiết lập.
+Từ Kali Linux:
 
-![Wazuh Custom SSH Brute-Force Detection](screenshots/wazuh-custom-rule.png)
+```bash
+seq 1 50 > passwords.txt
+hydra -l root -P passwords.txt ssh://192.168.129.129:2222 -t 4
+```
 
-## 🚀 4. Hướng phát triển tiếp theo (Next Steps)
+**Kết quả:** Sau khi Rule `100001` kích hoạt, IP của Kali bị chặn nên Hydra không thể tiếp tục kết nối.
 
-- **Active Response:** Cấu hình Wazuh Active Response để tự động chặn địa chỉ IP nguồn thông qua `iptables` hoặc `UFW` khi Custom Rule phát hiện hành vi Brute-Force.
-- **Incident Investigation:** Phân tích mối liên hệ giữa log xác thực trên Ubuntu Target và các cảnh báo trên Wazuh Dashboard nhằm xác định nguồn tấn công, thời điểm và tần suất thực hiện.
-- **Threat Intelligence:** Tích hợp nguồn dữ liệu Threat Intelligence để đối chiếu địa chỉ IP đáng ngờ với các nguồn dữ liệu về mối đe dọa đã biết.
+![Kali Hydra bị treo](screenshots/1_Kali_Hydra_Bi_Treo.png)
+
+### Bước 3: Blue Team – Kiểm tra cảnh báo trên Telegram
+
+Cảnh báo Level 10 được gửi về Telegram qua workflow n8n.
+
+![Telegram cảnh báo Level 10](screenshots/2_Telegram_CanhBao_Level10.png)
+
+### Bước 4: Xác minh Active Response đã thực thi
+
+Trên Ubuntu Target, kiểm tra log thực thi Active Response:
+
+```bash
+sudo tail -n 20 /var/ossec/logs/active-responses.log
+```
+
+**Kết quả:** Log ghi nhận script `firewall-drop` được gọi với IP nguồn `192.168.129.128`.
+
+![Log thực thi Active Response](screenshots/3_Ubuntu_Log_ThucThi_ActiveResponse.png)
+
+### Bước 5: Xác minh IP đã bị chặn bằng iptables
+
+```bash
+sudo iptables -L INPUT -n --line-numbers
+```
+
+**Kết quả:** Xuất hiện rule `DROP` cho địa chỉ `192.168.129.128`.
+
+![iptables DROP IP tấn công](screenshots/4_Ubuntu_Iptables_Drop_IP.png)
+
+Sau `600` giây, Wazuh tự động gỡ rule này. Có thể gỡ thủ công khi cần:
+
+```bash
+sudo iptables -D INPUT -s 192.168.129.128 -j DROP
+```
+
+---
+
+# 🅱️ HƯỚNG B – CHẶN THỦ CÔNG QUA TELEGRAM (MANUAL BAN / HUMAN-IN-THE-LOOP)
+
+Ở hướng này **không bật** khối `<active-response>` cho Rule `100001` (hoặc tạm comment lại để quan sát rõ luồng thủ công). Thay vào đó, Analyst nhận cảnh báo trên Telegram và quyết định bấm nút **Ban**.
+
+## 🔄 6. Luồng hoạt động
+
+1. Wazuh phát hiện Brute-Force (Rule `100001`, Level 10) → gửi alert JSON đến **Webhook của n8n**.
+2. Workflow **`Wazuh_SOC.json`** xử lý alert, trích xuất `srcip`, `agent`, `rule`... và gửi tin nhắn lên Telegram kèm **nút Ban**.
+3. Analyst nhấn nút **Ban** → Telegram gửi callback đến Webhook n8n (thông qua **ngrok**).
+4. Workflow **`Tele_to_Wazuh.json`** nhận callback, xác thực với **Wazuh API**, rồi gọi `PUT /active-response` để chặn IP.
+5. Active Response thực thi `firewall-drop` trên Agent → n8n phản hồi lại Telegram "Đã chặn".
+
+## 🛠️ 7. Các bước thực hiện
+
+### Bước 1: Cài đặt n8n (Docker)
+
+```bash
+docker run -d --name n8n \
+  -p 5678:5678 \
+  -v n8n_data:/home/node/.n8n \
+  n8nio/n8n
+```
+
+Truy cập `http://localhost:5678` để tạo tài khoản quản trị.
+
+### Bước 2: Mở tunnel bằng ngrok
+
+Telegram chỉ gửi callback đến địa chỉ **HTTPS công khai**, nên cần ngrok để public n8n đang chạy nội bộ.
+
+```bash
+# Chỉ cần làm 1 lần: gắn authtoken lấy từ dashboard.ngrok.com
+ngrok config add-authtoken <NGROK_AUTHTOKEN>
+
+# Mở tunnel tới n8n
+ngrok http 5678
+```
+
+Ngrok trả về URL dạng `https://xxxx-xx-xx.ngrok-free.app`. Chạy lại n8n với biến `WEBHOOK_URL` trỏ tới URL này:
+
+```bash
+docker rm -f n8n
+
+docker run -d --name n8n \
+  -p 5678:5678 \
+  -v n8n_data:/home/node/.n8n \
+  -e WEBHOOK_URL=https://xxxx-xx-xx.ngrok-free.app/ \
+  n8nio/n8n
+```
+
+> ⚠️ Với gói ngrok miễn phí, URL **thay đổi mỗi lần khởi động lại**. Khi đổi URL, cần cập nhật `WEBHOOK_URL`, khởi động lại n8n và **Deactivate → Activate** lại workflow để n8n đăng ký lại webhook với Telegram.
+
+Kiểm tra Telegram đã nhận Webhook đúng chưa:
+
+```bash
+curl "https://api.telegram.org/bot<BOT_TOKEN>/getWebhookInfo"
+```
+
+### Bước 3: Import Workflow vào n8n
+
+1. Vào **Workflows → Import from File** và nhập lần lượt `Wazuh_SOC.json`, `Tele_to_Wazuh.json`.
+2. Tạo **Credentials** cho Telegram (nhập `BOT_TOKEN`) và gán vào các node Telegram.
+3. Cập nhật `CHAT_ID`, địa chỉ Wazuh API (`https://<WAZUH_IP>:55000`) và tài khoản API trong các node HTTP Request.
+4. Bật **Active** cho cả hai workflow.
+
+| Workflow | Chức năng |
+|---|---|
+| `Wazuh_SOC.json` | Nhận alert từ Wazuh → định dạng → gửi Telegram kèm nút **Ban** |
+| `Tele_to_Wazuh.json` | Nhận callback từ nút bấm → đăng nhập Wazuh API → gọi Active Response |
+
+![Workflow Wazuh đến Telegram](screenshots/wazuh_soc.png)
+
+![Workflow Telegram đến Wazuh](screenshots/tele_to_wazuh.png)
+
+### Bước 4: Cấu hình Wazuh gửi cảnh báo về n8n
+
+Trên Wazuh Manager, thêm khối `<integration>` vào `/var/ossec/etc/ossec.conf`:
+
+```xml
+<integration>
+  <name>shuffle</name>
+  <hook_url>https://xxxx-xx-xx.ngrok-free.app/webhook/wazuh-alert</hook_url>
+  <level>10</level>
+  <alert_format>json</alert_format>
+</integration>
+```
+
+> Lưu ý: `hook_url` phải khớp với đường dẫn Webhook trong node **Webhook** của `Wazuh_SOC.json`. Nếu Wazuh và n8n cùng mạng LAN, có thể dùng IP nội bộ (`http://<N8N_IP>:5678/webhook/...`) thay cho ngrok.
+
+Khởi động lại Manager:
+
+```bash
+sudo systemctl restart wazuh-manager
+```
+
+### Bước 5: Tạo user Wazuh API cho n8n (khuyến nghị)
+
+Nên tạo user riêng thay vì dùng tài khoản `wazuh-wui`/`admin`. Kiểm tra API hoạt động:
+
+```bash
+# Lấy JWT token
+curl -k -u <API_USER>:<API_PASSWORD> -X POST \
+  "https://<WAZUH_IP>:55000/security/user/authenticate?raw=true"
+```
+
+Lệnh gọi Active Response mà n8n thực hiện tương đương:
+
+```bash
+curl -k -X PUT "https://<WAZUH_IP>:55000/active-response?agents_list=<AGENT_ID>" \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "command": "firewall-drop",
+    "arguments": ["-"],
+    "alert": {
+      "data": {
+        "srcip": "192.168.129.128"
+      }
+    }
+  }'
+```
+
+### Bước 6: Red Team – Tấn công và nhận cảnh báo
+
+Từ Kali Linux:
+
+```bash
+hydra -l root -P passwords.txt ssh://192.168.129.129:2222 -t 4
+```
+
+Telegram nhận được tin nhắn cảnh báo kèm nút **Ban**:
+
+![Thông báo tấn công trên Telegram](screenshots/Thong_Bao_Tan_Cong.png)
+
+### Bước 7: Blue Team – Nhấn nút Ban
+
+Analyst kiểm tra thông tin (IP nguồn, Agent, Rule, thời điểm) và nhấn **Ban**. n8n gọi Wazuh API, Active Response thực thi và Telegram phản hồi kết quả.
+
+![Chặn thủ công qua Telegram](screenshots/Ban_Thu_Cong.png)
+
+### Bước 8: Xác minh
+
+```bash
+# Trên Ubuntu Target
+sudo tail -n 20 /var/ossec/logs/active-responses.log
+sudo iptables -L INPUT -n --line-numbers
+```
+
+**Kết quả:** IP `192.168.129.128` xuất hiện với hành động `DROP`, tương tự Hướng A.
+
+---
+
+## ⚖️ 8. So sánh hai hướng
+
+| Tiêu chí | A. Auto-Ban | B. Manual Ban (Telegram) |
+|---|---|---|
+| Tốc độ | Tức thì | Phụ thuộc người trực |
+| Nguy cơ chặn nhầm | Cao hơn | Thấp (có bước xác minh) |
+| Độ phức tạp triển khai | Thấp (chỉ cấu hình Wazuh) | Cao hơn (n8n, ngrok, Telegram, Wazuh API) |
+| Phù hợp với | Luật độ tin cậy cao, tấn công rõ ràng | Cảnh báo cần điều tra, IP nội bộ/đối tác |
+| Khả năng mở rộng | Hạn chế | Dễ thêm bước làm giàu dữ liệu (Threat Intel, whitelist) |
+
+## 🧯 9. Xử lý sự cố thường gặp (Troubleshooting)
+
+| Triệu chứng | Nguyên nhân thường gặp | Cách xử lý |
+|---|---|---|
+| Không nhận cảnh báo Telegram | Sai `hook_url` hoặc workflow chưa Active | Kiểm tra `/var/ossec/logs/integrations.log`, bật Active workflow |
+| Nhấn nút Ban không có phản hồi | URL ngrok đã đổi, Webhook Telegram lỗi | Chạy `getWebhookInfo`, cập nhật `WEBHOOK_URL`, Deactivate/Activate lại workflow |
+| Wazuh API trả `401` | Token hết hạn (mặc định 900 giây) | Đảm bảo workflow lấy token mới ở mỗi lần chạy |
+| Không có rule iptables | Agent chưa nhận lệnh / sai Agent ID | Xem `active-responses.log` và `ossec.log` trên Agent |
+| Tự chặn nhầm IP quản trị | Không có whitelist | Dùng `<white_list>` trong `ossec.conf` (xem Next Steps) |
+
+## 🚀 10. Hướng phát triển tiếp theo (Next Steps)
+
+- **Whitelist IP tin cậy:** Khai báo `<white_list>` trong `ossec.conf` để không bao giờ chặn IP của quản trị viên.
+- **Nút Unban:** Bổ sung nút **Unban** trên Telegram để gỡ chặn nhanh khi xử lý nhầm.
+- **Threat Intelligence:** Tích hợp AbuseIPDB/VirusTotal trong n8n để làm giàu dữ liệu IP trước khi hiển thị cho Analyst.
+- **Phân quyền:** Chỉ cho phép `CHAT_ID`/User ID được ủy quyền bấm nút Ban.
+- **Ticketing:** Tự động tạo ticket (TheHive, Jira) cho mỗi sự cố đã xử lý.
+- **Triển khai ổn định:** Thay ngrok bằng tên miền cố định (Cloudflare Tunnel) để không phải cập nhật URL.
