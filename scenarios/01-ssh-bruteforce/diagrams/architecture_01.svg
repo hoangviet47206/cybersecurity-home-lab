@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <!-- Arrowhead Markers -->
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+    </marker>
+    <marker id="arrow-slate" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+    <!-- Subtle Drop Shadow -->
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect x="4" y="4" width="952" height="512" rx="14" fill="#fafbfc" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Title -->
+  <text x="480" y="38" text-anchor="middle" font-size="17" font-weight="700" fill="#0f172a" letter-spacing="0.4">
+    KIẾN TRÚC LAB PHÁT HIỆN SSH BRUTE-FORCE (KỊCH BẢN 01)
+  </text>
+
+  <!-- ==================== NODE 1: KALI LINUX (ATTACKER) ==================== -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="75" width="225" height="165" rx="12" fill="#fff5f5" stroke="#dc2626" stroke-width="1.8"/>
+  </g>
+  <!-- Monitor Icon -->
+  <g transform="translate(127, 95)">
+    <rect x="0" y="0" width="50" height="34" rx="4" fill="#1e293b"/>
+    <rect x="4" y="4" width="42" height="24" rx="2" fill="#0f172a"/>
+    <text x="11" y="20" font-size="11" font-family="monospace" fill="#ef4444" font-weight="bold">&gt;_</text>
+    <rect x="20" y="34" width="10" height="6" fill="#475569"/>
+    <rect x="13" y="40" width="24" height="3.5" rx="1.5" fill="#475569"/>
+  </g>
+  <text x="152" y="162" text-anchor="middle" font-size="15" font-weight="700" fill="#991b1b">Kali Linux (Attacker)</text>
+  <text x="152" y="184" text-anchor="middle" font-size="12.5" font-family="monospace" fill="#7f1d1d">192.168.129.128</text>
+  <rect x="75" y="198" width="155" height="24" rx="6" fill="#fee2e2"/>
+  <text x="152" y="214" text-anchor="middle" font-size="11.5" font-weight="600" fill="#b91c1c">Hydra SSH Brute-Force</text>
+
+  <!-- ==================== NODE 2: UBUNTU TARGET ==================== -->
+  <g filter="url(#shadow)">
+    <rect x="368" y="75" width="225" height="165" rx="12" fill="#fff8eb" stroke="#ea580c" stroke-width="1.8"/>
+  </g>
+  <!-- Server Stack Icon -->
+  <g transform="translate(454, 94)">
+    <rect x="0" y="0" width="50" height="12" rx="3" fill="#ea580c"/>
+    <circle cx="8" cy="6" r="2" fill="#fff"/>
+    <rect x="15" y="4.5" width="18" height="3" rx="1" fill="#fed7aa"/>
+    <rect x="0" y="15" width="50" height="12" rx="3" fill="#ea580c"/>
+    <circle cx="8" cy="21" r="2" fill="#fff"/>
+    <rect x="15" y="19.5" width="18" height="3" rx="1" fill="#fed7aa"/>
+    <rect x="0" y="30" width="50" height="12" rx="3" fill="#ea580c"/>
+    <circle cx="8" cy="36" r="2" fill="#fff"/>
+    <rect x="15" y="34.5" width="18" height="3" rx="1" fill="#fed7aa"/>
+    <!-- Alert Dot -->
+    <circle cx="48" cy="3" r="7" fill="#dc2626" stroke="#fff8eb" stroke-width="2"/>
+  </g>
+  <text x="480" y="162" text-anchor="middle" font-size="15" font-weight="700" fill="#9a3412">Ubuntu Target</text>
+  <text x="480" y="184" text-anchor="middle" font-size="12.5" font-family="monospace" fill="#7c2d12">192.168.129.129</text>
+  <rect x="390" y="198" width="180" height="24" rx="6" fill="#ffedd5"/>
+  <text x="480" y="214" text-anchor="middle" font-size="11.5" font-weight="600" fill="#c2410c">SSH :2222 | Wazuh Agent</text>
+
+  <!-- ==================== NODE 3: WAZUH MANAGER (SIEM) ==================== -->
+  <g filter="url(#shadow)">
+    <rect x="695" y="75" width="225" height="165" rx="12" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.8"/>
+  </g>
+  <!-- Shield Check Icon -->
+  <g transform="translate(787, 92)">
+    <path d="M21 2 L40 9 V22 C40 33 32 41 21 45 C10 41 2 33 2 22 V9 Z" fill="#0284c7"/>
+    <path d="M13 23 L19 29 L30 16" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="807" y="162" text-anchor="middle" font-size="15" font-weight="700" fill="#075985">Wazuh Manager (SIEM)</text>
+  <text x="807" y="184" text-anchor="middle" font-size="12.5" font-family="monospace" fill="#0c4a6e">192.168.129.131</text>
+  <rect x="717" y="198" width="180" height="24" rx="6" fill="#e0f2fe"/>
+  <text x="807" y="214" text-anchor="middle" font-size="11.5" font-weight="600" fill="#0369a1">Rule 100001 (Level 10)</text>
+
+  <!-- ==================== NODE 4: SOC ANALYST & DASHBOARD ==================== -->
+  <g filter="url(#shadow)">
+    <rect x="368" y="315" width="225" height="135" rx="12" fill="#eef2ff" stroke="#4f46e5" stroke-width="1.8"/>
+  </g>
+  <!-- Analyst Icon -->
+  <g transform="translate(461, 330)">
+    <circle cx="19" cy="12" r="10" fill="#4f46e5"/>
+    <path d="M3 39 C3 29 10 24 19 24 C28 24 35 29 35 39 Z" fill="#4f46e5"/>
+  </g>
+  <text x="480" y="392" text-anchor="middle" font-size="14.5" font-weight="700" fill="#312e81">SOC Analyst &amp; Dashboard</text>
+  <text x="480" y="412" text-anchor="middle" font-size="11.5" fill="#4338ca">Phân tích Rule 5760 → 100001</text>
+  <text x="480" y="431" text-anchor="middle" font-size="11.5" font-weight="600" fill="#3730a3">MITRE ATT&amp;CK: T1110.001</text>
+
+  <!-- ==================== CONNECTIONS & LABELS ==================== -->
+  <!-- 1. Kali -> Ubuntu (Attack Flow) -->
+  <line x1="265" y1="157" x2="360" y2="157" stroke="#dc2626" stroke-width="2.4" marker-end="url(#arrow-red)"/>
+  <text x="316" y="138" text-anchor="middle" font-size="11" font-weight="600" fill="#dc2626">Brute-Force</text>
+  <text x="316" y="151" text-anchor="middle" font-size="10.5" fill="#991b1b">SSH :2222</text>
+
+  <!-- 2. Ubuntu -> Wazuh Manager (Log Delivery) -->
+  <line x1="593" y1="157" x2="687" y2="157" stroke="#475569" stroke-width="2.4" marker-end="url(#arrow-slate)"/>
+  <text x="644" y="138" text-anchor="middle" font-size="11" font-weight="600" fill="#334155">Đẩy auth.log</text>
+  <text x="644" y="151" text-anchor="middle" font-size="10.5" fill="#475569">Port 1514/TCP</text>
+
+  <!-- 3. Wazuh Manager -> SOC Analyst (Alerting) -->
+  <path d="M 807 240 C 807 345, 700 375, 601 378" fill="none" stroke="#2563eb" stroke-width="2.4" marker-end="url(#arrow-blue)"/>
+  <rect x="652" y="316" width="166" height="34" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="735" y="331" text-anchor="middle" font-size="11" font-weight="600" fill="#1d4ed8">Cảnh báo Level 10</text>
+  <text x="735" y="344" text-anchor="middle" font-size="10.5" fill="#2563eb">≥ 5 lần lỗi / 60s (100001)</text>
+
+  <!-- 4. SOC Analyst <-> Ubuntu Target (Local Log Verification) -->
+  <line x1="480" y1="315" x2="480" y2="248" stroke="#2563eb" stroke-width="2" stroke-dasharray="5,4" marker-end="url(#arrow-blue)"/>
+  <rect x="415" y="266" width="130" height="22" rx="5" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="480" y="281" text-anchor="middle" font-size="10.5" font-weight="600" fill="#1e40af">Kiểm tra auth.log</text>
+
+  <!-- ==================== LEGEND ==================== -->
+  <line x1="40" y1="472" x2="920" y2="472" stroke="#e2e8f0" stroke-width="1"/>
+
+  <line x1="120" y1="494" x2="155" y2="494" stroke="#dc2626" stroke-width="3"/>
+  <text x="165" y="498" font-size="12" font-weight="600" fill="#334155">Luồng tấn công (Red Team)</text>
+
+  <line x1="395" y1="494" x2="430" y2="494" stroke="#475569" stroke-width="3"/>
+  <text x="440" y="498" font-size="12" font-weight="600" fill="#334155">Thu thập Log (Wazuh Agent)</text>
+
+  <line x1="670" y1="494" x2="705" y2="494" stroke="#2563eb" stroke-width="3"/>
+  <text x="715" y="498" font-size="12" font-weight="600" fill="#334155">Giám sát &amp; Phân tích (Blue Team)</text>
+</svg>
