@@ -1,0 +1,16 @@
+<!-- Custom Decoder: /var/ossec/etc/decoders/local_decoder.xml -->
+<decoder name="custom-yara-webshell">
+  <prematch>wazuh-yara:</prematch>
+</decoder>
+
+<!-- Custom Rule: /var/ossec/etc/rules/local_rules.xml -->
+<group name="local,syslog,yara,">
+  <rule id="100005" level="12">
+    <decoded_as>custom-yara-webshell</decoded_as>
+    <match>Malware detected</match>
+    <description>YARA: Phat hien tep tin Webshell tai len ung dung Employee Management.</description>
+    <mitre>
+      <id>T1505.003</id>
+    </mitre>
+  </rule>
+</group>

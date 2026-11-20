@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 660" width="1240" height="660" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" xmlns:c2pa="http://c2pa.org/manifest">
+  <defs>
+    <marker id="aRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#dc2626"/></marker>
+    <marker id="aGray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#475569"/></marker>
+    <marker id="aGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#16a34a"/></marker>
+    <marker id="aBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#2563eb"/></marker>
+    <marker id="aPurple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#7c3aed"/></marker>
+  </defs>
+
+  <!-- Background -->
+  <rect x="1" y="1" width="1238" height="658" rx="14" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="620" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0f172a">Kiến trúc Lab – Kịch bản 03: Malware/Webshell, phân tích C2 và cô lập mạng đa lớp</text>
+
+  <!-- ================= ROW 1 ================= -->
+  <!-- Kali -->
+  <rect x="30" y="60" width="170" height="150" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <g transform="translate(85,74)">
+    <rect x="2" y="4" width="56" height="38" rx="5" fill="#1e293b"/>
+    <rect x="6" y="8" width="48" height="30" rx="2" fill="#0f172a"/>
+    <text x="10" y="29" font-size="16" font-weight="700" fill="#22c55e" font-family="Consolas, monospace">&gt;_</text>
+    <rect x="26" y="42" width="8" height="8" fill="#475569"/>
+    <rect x="16" y="50" width="28" height="5" rx="2" fill="#475569"/>
+  </g>
+  <text x="115" y="160" text-anchor="middle" font-size="14" font-weight="700" fill="#991b1b">Kali Linux</text>
+  <text x="115" y="178" text-anchor="middle" font-size="12" fill="#475569">Attacker + C2 Server</text>
+  <text x="115" y="196" text-anchor="middle" font-size="12" fill="#475569">192.168.129.128</text>
+
+  <!-- pfSense -->
+  <rect x="360" y="60" width="170" height="150" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+  <g transform="translate(415,74)">
+    <rect x="2" y="6" width="56" height="48" rx="3" fill="#7c3aed"/>
+    <g stroke="#f5f3ff" stroke-width="2">
+      <line x1="2" y1="22" x2="58" y2="22"/><line x1="2" y1="38" x2="58" y2="38"/>
+      <line x1="30" y1="6" x2="30" y2="22"/>
+      <line x1="16" y1="22" x2="16" y2="38"/><line x1="44" y1="22" x2="44" y2="38"/>
+      <line x1="30" y1="38" x2="30" y2="54"/>
+    </g>
+  </g>
+  <text x="445" y="160" text-anchor="middle" font-size="14" font-weight="700" fill="#5b21b6">pfSense Firewall</text>
+  <text x="445" y="178" text-anchor="middle" font-size="12" fill="#475569">Gateway · Suricata IDS</text>
+  <text x="445" y="196" text-anchor="middle" font-size="12" fill="#475569">Blocklist (Alias)</text>
+
+  <!-- Ubuntu -->
+  <rect x="690" y="60" width="170" height="150" rx="12" fill="#fff7ed" stroke="#e95420" stroke-width="2"/>
+  <g transform="translate(745,74)">
+    <rect x="2" y="2" width="56" height="16" rx="4" fill="#e95420"/>
+    <rect x="2" y="21" width="56" height="16" rx="4" fill="#e95420"/>
+    <rect x="2" y="40" width="56" height="16" rx="4" fill="#e95420"/>
+    <circle cx="12" cy="10" r="3" fill="#fff"/><circle cx="12" cy="29" r="3" fill="#fff"/><circle cx="12" cy="48" r="3" fill="#fff"/>
+    <rect x="24" y="8" width="22" height="4" rx="2" fill="#fff" opacity=".8"/>
+    <rect x="24" y="27" width="22" height="4" rx="2" fill="#fff" opacity=".8"/>
+    <rect x="24" y="46" width="22" height="4" rx="2" fill="#fff" opacity=".8"/>
+    <circle cx="54" cy="6" r="9" fill="#dc2626" stroke="#fff" stroke-width="2"/>
+    <text x="54" y="10" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">!</text>
+  </g>
+  <text x="775" y="160" text-anchor="middle" font-size="14" font-weight="700" fill="#9a3412">Ubuntu Target</text>
+  <text x="775" y="178" text-anchor="middle" font-size="12" fill="#475569">Wazuh Agent: FIM + YARA</text>
+  <text x="775" y="196" text-anchor="middle" font-size="12" fill="#475569">Web: /var/www/html</text>
+
+  <!-- Wazuh -->
+  <rect x="1030" y="60" width="170" height="150" rx="12" fill="#f0f9ff" stroke="#0ea5e9" stroke-width="2"/>
+  <g transform="translate(1085,74)">
+    <path d="M30 2 L55 11 V30 C55 45 43 55 30 59 C17 55 5 45 5 30 V11 Z" fill="#0ea5e9"/>
+    <path d="M17 31 L26 40 L44 21" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="1115" y="160" text-anchor="middle" font-size="14" font-weight="700" fill="#075985">Wazuh Manager</text>
+  <text x="1115" y="178" text-anchor="middle" font-size="12" fill="#475569">Alert Level 12+ · Sigma</text>
+  <text x="1115" y="196" text-anchor="middle" font-size="12" fill="#475569">API :55000</text>
+
+  <!-- Row 1 arrows -->
+  <!-- ① upload: Kali -> pfSense -> Ubuntu -->
+  <line x1="202" y1="125" x2="358" y2="125" stroke="#dc2626" stroke-width="2.5" marker-end="url(#aRed)"/>
+  <text x="280" y="115" text-anchor="middle" font-size="12" font-weight="600" fill="#dc2626">① Upload webshell</text>
+  <text x="280" y="144" text-anchor="middle" font-size="11" fill="#64748b">EICAR / PHP</text>
+  <line x1="532" y1="125" x2="688" y2="125" stroke="#dc2626" stroke-width="2.5" marker-end="url(#aRed)"/>
+  <text x="610" y="115" text-anchor="middle" font-size="12" font-weight="600" fill="#dc2626">① → /var/www/html</text>
+
+  <!-- ② reverse shell: Ubuntu -> pfSense -> Kali -->
+  <line x1="688" y1="165" x2="532" y2="165" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="7 4" marker-end="url(#aRed)"/>
+  <text x="610" y="185" text-anchor="middle" font-size="12" font-weight="600" fill="#dc2626">② Reverse Shell</text>
+  <line x1="358" y1="165" x2="202" y2="165" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="7 4" marker-end="url(#aRed)"/>
+  <text x="280" y="185" text-anchor="middle" font-size="12" font-weight="600" fill="#dc2626">② C2 call-back</text>
+
+  <!-- ③ Agent -> Wazuh -->
+  <line x1="862" y1="110" x2="1028" y2="110" stroke="#475569" stroke-width="2.5" marker-end="url(#aGray)"/>
+  <text x="945" y="100" text-anchor="middle" font-size="12" font-weight="600" fill="#475569">③ FIM + YARA</text>
+  <text x="945" y="128" text-anchor="middle" font-size="11" fill="#64748b">sự kiện / alert</text>
+
+  <!-- ⑧ Wazuh -> Ubuntu remove-threat -->
+  <line x1="1028" y1="160" x2="862" y2="160" stroke="#16a34a" stroke-width="2.5" stroke-dasharray="7 4" marker-end="url(#aGreen)"/>
+  <text x="945" y="180" text-anchor="middle" font-size="12" font-weight="600" fill="#16a34a">⑧ remove-threat</text>
+
+  <!-- ================= ROW 2 ================= -->
+  <!-- Analyst -->
+  <rect x="30" y="330" width="170" height="150" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="2"/>
+  <g transform="translate(85,344)">
+    <circle cx="30" cy="18" r="14" fill="#6366f1"/>
+    <path d="M4 58 C4 42 16 34 30 34 C44 34 56 42 56 58 Z" fill="#6366f1"/>
+  </g>
+  <text x="115" y="430" text-anchor="middle" font-size="14" font-weight="700" fill="#3730a3">SOC Analyst</text>
+  <text x="115" y="448" text-anchor="middle" font-size="12" fill="#475569">Xem cảnh báo, quyết định</text>
+  <text x="115" y="466" text-anchor="middle" font-size="12" fill="#475569">Bấm nút 1 hoặc nút 2</text>
+
+  <!-- Wireshark -->
+  <rect x="360" y="330" width="170" height="150" rx="12" fill="#eff6ff" stroke="#1e6bb8" stroke-width="2"/>
+  <g transform="translate(415,344)">
+    <rect x="2" y="2" width="56" height="56" rx="12" fill="#1e6bb8"/>
+    <path d="M14 44 C21 40 26 26 31 10 C35 26 41 38 49 44 Z" fill="#fff"/>
+    <path d="M10 50 C16 46 20 52 26 48 C32 44 36 52 42 48 C46 46 49 48 52 50" fill="none" stroke="#bfdbfe" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  <text x="445" y="430" text-anchor="middle" font-size="14" font-weight="700" fill="#1e40af">Wireshark</text>
+  <text x="445" y="448" text-anchor="middle" font-size="12" fill="#475569">Phân tích file PCAP</text>
+  <text x="445" y="466" text-anchor="middle" font-size="12" fill="#475569">TCP Stream → C2 traffic</text>
+
+  <!-- Telegram -->
+  <rect x="690" y="330" width="170" height="150" rx="12" fill="#ecfeff" stroke="#29a9eb" stroke-width="2"/>
+  <g transform="translate(745,344)">
+    <circle cx="30" cy="30" r="29" fill="#29a9eb"/>
+    <path d="M12 29 L47 15 L41 46 L31 38 L25 44 L24 34 L41 21 L21 32 Z" fill="#fff"/>
+  </g>
+  <text x="775" y="430" text-anchor="middle" font-size="14" font-weight="700" fill="#0369a1">Telegram Bot</text>
+  <text x="775" y="448" text-anchor="middle" font-size="12" fill="#475569">[Xóa File] [Cô lập IP C2]</text>
+  <text x="775" y="466" text-anchor="middle" font-size="12" fill="#475569">Hash · IP C2 · đường dẫn</text>
+
+  <!-- Shuffle -->
+  <rect x="1030" y="330" width="170" height="150" rx="12" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/>
+  <g transform="translate(1085,344)">
+    <rect x="2" y="2" width="56" height="56" rx="12" fill="#0d9488"/>
+    <path d="M10 20 H20 C30 20 30 40 40 40 H46" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+    <path d="M10 40 H20 C30 40 30 20 40 20 H46" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+    <path d="M44 13 L53 20 L44 27 Z" fill="#fff"/>
+    <path d="M44 33 L53 40 L44 47 Z" fill="#fff"/>
+  </g>
+  <text x="1115" y="430" text-anchor="middle" font-size="14" font-weight="700" fill="#115e59">Shuffle (SOAR)</text>
+  <text x="1115" y="448" text-anchor="middle" font-size="12" fill="#475569">Webhook · API Wazuh</text>
+  <text x="1115" y="466" text-anchor="middle" font-size="12" fill="#475569">API pfSense</text>
+
+  <!-- Vertical arrows between rows -->
+  <!-- ④ Wazuh -> Shuffle -->
+  <line x1="1080" y1="212" x2="1080" y2="328" stroke="#2563eb" stroke-width="2.5" marker-end="url(#aBlue)"/>
+  <text x="1070" y="262" text-anchor="end" font-size="12" font-weight="600" fill="#2563eb">④ Webhook</text>
+  <!-- ⑦ Shuffle -> Wazuh (Nút 1) -->
+  <line x1="1150" y1="328" x2="1150" y2="212" stroke="#2563eb" stroke-width="2.5" marker-end="url(#aBlue)"/>
+  <text x="1160" y="262" text-anchor="start" font-size="12" font-weight="600" fill="#2563eb">⑦ Nút 1</text>
+  <!-- ⑩ pfSense -> Wireshark PCAP -->
+  <line x1="445" y1="212" x2="445" y2="328" stroke="#475569" stroke-width="2.5" marker-end="url(#aGray)"/>
+  <text x="435" y="270" text-anchor="end" font-size="12" font-weight="600" fill="#475569">⑩ PCAP</text>
+
+  <!-- ⑨ Shuffle -> pfSense (Nút 2) -->
+  <path d="M1050 330 C1000 270 560 270 500 213" fill="none" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#aPurple)"/>
+  <text x="775" y="294" text-anchor="middle" font-size="12" font-weight="600" fill="#7c3aed">⑨ Nút 2: API thêm IP C2 vào Blocklist</text>
+
+  <!-- ⑤ Shuffle <-> Telegram -->
+  <line x1="1028" y1="405" x2="862" y2="405" stroke="#2563eb" stroke-width="2.5" marker-start="url(#aBlue)" marker-end="url(#aBlue)"/>
+  <text x="945" y="395" text-anchor="middle" font-size="12" font-weight="600" fill="#2563eb">⑤ Cảnh báo ⇄ nút</text>
+
+  <!-- ⑥ Telegram <-> Analyst -->
+  <path d="M775 482 C775 570 115 570 115 482" fill="none" stroke="#2563eb" stroke-width="2.5" marker-start="url(#aBlue)" marker-end="url(#aBlue)"/>
+  <text x="445" y="575" text-anchor="middle" font-size="12" font-weight="600" fill="#2563eb">⑥ Analyst xem cảnh báo và bấm nút [Xóa File] / [Cô lập IP C2]</text>
+
+  <!-- Legend -->
+  <g transform="translate(60,630)" font-size="12" fill="#334155">
+    <line x1="0" y1="0" x2="34" y2="0" stroke="#dc2626" stroke-width="3"/>
+    <text x="42" y="4">Tấn công / C2</text>
+    <line x1="170" y1="0" x2="204" y2="0" stroke="#475569" stroke-width="3"/>
+    <text x="212" y="4">Phát hiện và log</text>
+    <line x1="360" y1="0" x2="394" y2="0" stroke="#2563eb" stroke-width="3"/>
+    <text x="402" y="4">SOAR (Shuffle ⇄ Telegram)</text>
+    <line x1="620" y1="0" x2="654" y2="0" stroke="#16a34a" stroke-width="3" stroke-dasharray="7 4"/>
+    <text x="662" y="4">Xóa file (remove-threat)</text>
+    <line x1="860" y1="0" x2="894" y2="0" stroke="#7c3aed" stroke-width="3"/>
+    <text x="902" y="4">Cô lập IP C2 tại pfSense</text>
+  </g>
+<metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTpjMDZmNzU0Yy1lY2M3LTQxZDUtOTFmOC01Y2EwZDZkMWMwZjEAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaB5TUugQb7CReXVhwt6s5mgAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDowNDU4MTA0YS1mM2E5LTQ0YmMtOWY2Zi04ZDk5YTkwNjc2YTBscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNoGyKY4D5xQYnTR4cMSKvFJgAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggymySxWuP+YtDQTh6Bi6v/v6amSlpB4Mx6A7iNdCmHHWkZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaDkDRlNwqYHdA3uw8m1VLPAAAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRMAAAAAAAAAAAAAAAAZGhhc2hYIN6vHL5UYzMTNOd3UDwBtoHObKNB87HldWhaxBxim/N4ZG5hbWVuanVtYmYgbWFuaWZlc3RqZXhjbHVzaW9uc4GiZXN0YXJ0GTFcZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOmMwNmY3NTRjLWVjYzctNDFkNS05MWY4LTVjYTBkNmQxYzBmMS9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOjBiN2FjZjRlLTM2MGQtNDc4Mi04MDk1LWNjOWU4ZGI4ODdlZXJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCDKbJLFa4/5i0NBOHoGLq/+/pqZKWkHgzHoDuI10KYcdaJjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFggEfy9zuNy/lD++skhDP4BtDrAfPm71uxipczBSHpNtgSiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFgg9GNFlvct8R8ARTtMLlXgyR6dTdcIUWHpl9I0blOgEs10Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQEIuidPTqy/CeCL6Hx+fVmcHEpFVvVRBZRONhnLbzwROqdc4QYJEpLfChdFt8Tcv5YqkSiKt8vuFOJIJNO5+iQ4=</c2pa:manifest></metadata></svg>
