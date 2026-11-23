@@ -1,0 +1,38 @@
+﻿<group name="sqli,web,suricata,employee_app,">
+
+  <rule id="100020" level="10">
+    <if_sid>86601</if_sid>
+    <field name="alert.signature_id">^9000001$|^9000002$</field>
+    <description>Suricata NIDS: SQL Injection attempt detected on $(dest_ip):$(dest_port) from $(src_ip)</description>
+    <mitre>
+      <id>T1190</id>
+    </mitre>
+  </rule>
+
+  <rule id="100021" level="3">
+    <if_sid>86600</if_sid>
+    <field name="app">^employee-management$</field>
+    <field name="endpoint">^/lab/search$</field>
+    <description>Employee App: Search request on /lab/search from $(src_ip) (rows: $(rows_returned))</description>
+  </rule>
+
+  <rule id="100022" level="12">
+    <if_sid>100021</if_sid>
+    <field name="status_code">^200$</field>
+    <field name="query_param" type="pcre2">(?i)('|%27).*(or|and|union)</field>
+    <description>Employee App: Successful SQL Injection confirmed from $(src_ip) - returned $(rows_returned) rows</description>
+    <mitre>
+      <id>T1190</id>
+    </mitre>
+  </rule>
+
+  <rule id="100023" level="8">
+    <if_sid>100021</if_sid>
+    <field name="event_type">^web_search_error$</field>
+    <description>Employee App: SQL Database Error triggered by $(src_ip) - possible SQLi probing</description>
+    <mitre>
+      <id>T1190</id>
+    </mitre>
+  </rule>
+
+</group>
